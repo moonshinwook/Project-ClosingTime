@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -14,7 +14,11 @@ class PROJECTSTEALTHEXIT_API AMyPlayer : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMyPlayer();
+public:
 
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Assassination", meta = (ClampMin = "0.0"))
+	float AssassinationRange = 150.0f;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
