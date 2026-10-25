@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "MyPlayer.generated.h"
 
+class AMyEnemy;
+
 UCLASS()
 class PROJECTSTEALTHEXIT_API AMyPlayer : public ACharacter
 {
@@ -15,10 +17,14 @@ public:
 	// Sets default values for this character's properties
 	AMyPlayer();
 public:
-
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Assassination", meta = (ClampMin = "0.0"))
 	float AssassinationRange = 150.0f;
+	UFUNCTION(BlueprintCallable, Category = "Assassination")
+	bool CheckDistanceToEnemy();
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assassination")
+	AMyEnemy* Enemy = nullptr;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

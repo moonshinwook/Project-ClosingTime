@@ -5,28 +5,32 @@
 #include "MyEnemy.h"
 #include "Engine/EngineTypes.h"
 #include "EngineUtils.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 }
+
+
 
 // Called when the game starts or when spawned
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	Enemy = Cast<AMyEnemy>(UGameplayStatics::GetActorOfClass(GetWorld(), AMyEnemy::StaticClass()));
 	
+
 }
 
 // Called every frame
 void AMyPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	CheckDistanceToEnemy();
 }
 
 // Called to bind functionality to input
@@ -36,3 +40,17 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+bool AMyPlayer::CheckDistanceToEnemy()
+{
+
+	if (!IsValid(Enemy))
+	{
+		printf("Enemy가 유효하지 않습니다.");
+		return false;
+	}
+
+	float DistanceToEnemy = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
+
+	return DistanceToEnemy <= AssassinationRange;
+
+}
