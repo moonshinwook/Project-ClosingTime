@@ -20,6 +20,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool BeginAssassionation();
 	UFUNCTION(BlueprintCallable)
+	bool SetAssassinationCollisionIgnored(bool Ignore);
+	UFUNCTION(BlueprintCallable)
 	void EndAssassionation();
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Assassination", meta = (ClampMin = "0.0"))

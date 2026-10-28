@@ -6,6 +6,7 @@
 #include "Engine/EngineTypes.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -44,6 +45,7 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 bool AMyPlayer::BeginAssassionation()
 {
+	SetAssassinationCollisionIgnored(true);
 	if (bIsAssassinating == true)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("암살 중 상태라 차단"));
@@ -58,12 +60,35 @@ bool AMyPlayer::BeginAssassionation()
 
 	UE_LOG(LogTemp, Warning, TEXT("암살 시작 통과"));
 	bIsAssassinating = true;
+
+	return true;
+}
+
+bool AMyPlayer::SetAssassinationCollisionIgnored(bool Ignore)
+{
+	if (!IsValid(Enemy))
+	{
+		return false;
+	}
+
+	UCapsuleComponent* PlayerCapsule = GetCapsuleComponent();
+	UCapsuleComponent* EnemyCapsule = Enemy->GetCapsuleComponent();
+
+	if (!IsValid(PlayerCapsule) || !IsValid(EnemyCapsule))
+	{
+		return false;
+	}
+
+	PlayerCapsule->IgnoreActorWhenMoving(Enemy, Ignore);
+	EnemyCapsule->IgnoreActorWhenMoving(this, Ignore);
+
 	return true;
 }
 
 void AMyPlayer::EndAssassionation()
 {
 	bIsAssassinating = false;
+	SetAssassinationCollisionIgnored(false);
 }
 
 bool AMyPlayer::CheckDistanceToEnemy()
@@ -71,7 +96,7 @@ bool AMyPlayer::CheckDistanceToEnemy()
 
 	if (!IsValid(Enemy))
 	{
-		printf("Enemy가 유효하지 않습니다.");
+		UE_LOG(LogTemp, Warning, TEXT("Enemy가 유효하지 않습니다."));
 		return false;
 	}
 
