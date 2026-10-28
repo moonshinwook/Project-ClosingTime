@@ -17,6 +17,10 @@ public:
 	// Sets default values for this character's properties
 	AMyPlayer();
 public:
+	UFUNCTION(BlueprintCallable)
+	bool BeginAssassionation();
+	UFUNCTION(BlueprintCallable)
+	void EndAssassionation();
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Assassination", meta = (ClampMin = "0.0"))
 	float AssassinationRange = 150.0f;
@@ -25,6 +29,8 @@ protected:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assassination")
 	AMyEnemy* Enemy = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Assassination")
+	bool bIsAssassinating = false;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

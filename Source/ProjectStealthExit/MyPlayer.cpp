@@ -17,12 +17,14 @@ AMyPlayer::AMyPlayer()
 
 
 
+
+
 // Called when the game starts or when spawned
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	Enemy = Cast<AMyEnemy>(UGameplayStatics::GetActorOfClass(GetWorld(), AMyEnemy::StaticClass()));
-	
+	BeginAssassionation();
 
 }
 
@@ -30,7 +32,7 @@ void AMyPlayer::BeginPlay()
 void AMyPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	CheckDistanceToEnemy();
+	
 }
 
 // Called to bind functionality to input
@@ -38,6 +40,30 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+bool AMyPlayer::BeginAssassionation()
+{
+	if (bIsAssassinating == true)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("암살 중 상태라 차단"));
+		return false;
+	}
+
+	if (!CheckDistanceToEnemy())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("대상 무효 또는 거리 초과"));
+		return false;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("암살 시작 통과"));
+	bIsAssassinating = true;
+	return true;
+}
+
+void AMyPlayer::EndAssassionation()
+{
+	bIsAssassinating = false;
 }
 
 bool AMyPlayer::CheckDistanceToEnemy()
@@ -51,6 +77,10 @@ bool AMyPlayer::CheckDistanceToEnemy()
 
 	float DistanceToEnemy = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
 
+	UE_LOG(LogTemp, Warning, TEXT("Enemy: %s / Distance: %.1f / Range: %.1f"),
+		*GetNameSafe(Enemy), DistanceToEnemy, AssassinationRange);
+
 	return DistanceToEnemy <= AssassinationRange;
 
 }
+
