@@ -60,6 +60,7 @@ bool AMyPlayer::BeginAssassionation()
 
 	UE_LOG(LogTemp, Warning, TEXT("암살 시작 통과"));
 	bIsAssassinating = true;
+	bUseControllerRotationYaw = false;
 
 	return true;
 }
@@ -89,6 +90,20 @@ void AMyPlayer::EndAssassionation()
 {
 	bIsAssassinating = false;
 	SetAssassinationCollisionIgnored(false);
+	bUseControllerRotationYaw = true;
+}
+
+bool AMyPlayer::CanProcessActionInput()
+{
+	if (bIsAssassinating == true)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+
 }
 
 bool AMyPlayer::CheckDistanceToEnemy()

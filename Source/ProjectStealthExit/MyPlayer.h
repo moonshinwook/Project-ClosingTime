@@ -23,6 +23,8 @@ public:
 	bool SetAssassinationCollisionIgnored(bool Ignore);
 	UFUNCTION(BlueprintCallable)
 	void EndAssassionation();
+	UFUNCTION(BlueprintPure)
+	bool CanProcessActionInput();
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Assassination", meta = (ClampMin = "0.0"))
 	float AssassinationRange = 150.0f;
