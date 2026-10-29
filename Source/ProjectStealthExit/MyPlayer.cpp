@@ -7,12 +7,14 @@
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
+#include "CharacterStateComponent.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
 {
  	
 	PrimaryActorTick.bCanEverTick = true;
+	CharacterStateComponent = CreateDefaultSubobject<UCharacterStateComponent>(TEXT("플레이어 상태"));
 	
 }
 
@@ -26,6 +28,9 @@ void AMyPlayer::BeginPlay()
 	Super::BeginPlay();
 	Enemy = Cast<AMyEnemy>(UGameplayStatics::GetActorOfClass(GetWorld(), AMyEnemy::StaticClass()));
 	BeginAssassionation();
+	UE_LOG(LogTemp, Log, TEXT("플레이어 상태 : %d, %d"), 
+		CharacterStateComponent->CurrentLifeState, 
+		CharacterStateComponent->CurrentStealthState);
 
 }
 
@@ -49,7 +54,7 @@ bool AMyPlayer::BeginAssassionation()
 	if (bIsAssassinating == true)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("암살 중 상태라 차단"));
-		return false;
+		return false; 
 	}
 
 	if (!CheckDistanceToEnemy())

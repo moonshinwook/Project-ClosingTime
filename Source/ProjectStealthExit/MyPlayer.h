@@ -6,16 +6,26 @@
 #include "GameFramework/Character.h"
 #include "MyPlayer.generated.h"
 
+class UCharacterStateComponent;
+
 class AMyEnemy;
+
+enum State
+{
+
+};
 
 UCLASS()
 class PROJECTSTEALTHEXIT_API AMyPlayer : public ACharacter
 {
 	GENERATED_BODY()
-
+	
 public:
 	// Sets default values for this character's properties
 	AMyPlayer();
+private:
+	UPROPERTY()
+	TObjectPtr<UCharacterStateComponent> CharacterStateComponent;
 public:
 	UFUNCTION(BlueprintCallable)
 	bool BeginAssassionation();

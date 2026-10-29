@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "MyEnemy.generated.h"
 
+class UCharacterStateComponent;
+
 UCLASS()
 class PROJECTSTEALTHEXIT_API AMyEnemy : public ACharacter
 {
@@ -14,6 +16,9 @@ class PROJECTSTEALTHEXIT_API AMyEnemy : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMyEnemy();
+private:
+	UPROPERTY()
+	TObjectPtr<UCharacterStateComponent> CharacterStateComponent;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
