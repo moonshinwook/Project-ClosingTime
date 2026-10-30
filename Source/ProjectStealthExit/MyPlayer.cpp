@@ -67,6 +67,12 @@ bool AMyPlayer::BeginAssassionation()
 		return false;
 	}
 
+	if (!CheckAssassinationAngle())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("암살 각도 조건 불충족"));
+		return false;
+	}
+
 	if(*PlayerLifeState == LifeState::Dead || *PlayerStealthState == StealthState::Detected)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("플레이어 상태 불가"));
@@ -120,6 +126,30 @@ bool AMyPlayer::CanProcessActionInput()
 		return true;
 	}
 
+}
+
+bool AMyPlayer::CheckAssassinationAngle()
+{
+	if (!IsValid(Enemy))
+	{
+		return false;
+	}
+
+	FVector DirectionToPlayer = GetActorLocation() - Enemy->GetActorLocation();
+	DirectionToPlayer.Z = 0.0f;
+
+	FVector EnemyForward = Enemy->GetActorForwardVector();
+	EnemyForward.Z = 0.0f;
+
+	if (!DirectionToPlayer.Normalize() || !EnemyForward.Normalize())
+	{
+		return false;
+	}
+
+	float Dot = FVector::DotProduct(EnemyForward, DirectionToPlayer);
+	float FrontThreshold = FMath::Cos(FMath::DegreesToRadians(70.0f));
+
+	return Dot < FrontThreshold;
 }
 
 bool AMyPlayer::CheckDistanceToEnemy()

@@ -35,6 +35,8 @@ public:
 	void EndAssassionation();
 	UFUNCTION(BlueprintPure)
 	bool CanProcessActionInput();
+public:
+	bool CheckAssassinationAngle();
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Assassination", meta = (ClampMin = "0.0"))
 	float AssassinationRange = 150.0f;
