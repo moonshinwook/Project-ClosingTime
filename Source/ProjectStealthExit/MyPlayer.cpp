@@ -50,7 +50,11 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 bool AMyPlayer::BeginAssassionation()
 {
-	SetAssassinationCollisionIgnored(true);
+	LifeState* PlayerLifeState;
+	PlayerLifeState = &CharacterStateComponent->CurrentLifeState;
+	StealthState* PlayerStealthState;
+	PlayerStealthState = &CharacterStateComponent->CurrentStealthState;
+
 	if (bIsAssassinating == true)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("암살 중 상태라 차단"));
@@ -63,8 +67,15 @@ bool AMyPlayer::BeginAssassionation()
 		return false;
 	}
 
+	if(*PlayerLifeState == LifeState::Dead || *PlayerStealthState == StealthState::Detected)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("플레이어 상태 불가"));
+		return false;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("암살 시작 통과"));
 	bIsAssassinating = true;
+	SetAssassinationCollisionIgnored(true);
 	bUseControllerRotationYaw = false;
 
 	return true;
