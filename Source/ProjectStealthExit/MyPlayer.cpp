@@ -73,6 +73,12 @@ bool AMyPlayer::BeginAssassionation()
 		return false;
 	}
 
+	if (!CheckAssassinationPath())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("장애물이 있습니다."));
+		return false;
+	}
+
 	if(*PlayerLifeState == LifeState::Dead || *PlayerStealthState == StealthState::Detected)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("플레이어 상태 불가"));
@@ -128,6 +134,28 @@ bool AMyPlayer::CanProcessActionInput()
 
 }
 
+
+
+
+
+bool AMyPlayer::CheckDistanceToEnemy()
+{
+
+	if (!IsValid(Enemy))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Enemy가 유효하지 않습니다."));
+		return false;
+	}
+
+	float DistanceToEnemy = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
+
+	UE_LOG(LogTemp, Warning, TEXT("Enemy: %s / Distance: %.1f / Range: %.1f"),
+		*GetNameSafe(Enemy), DistanceToEnemy, AssassinationRange);
+
+	return DistanceToEnemy <= AssassinationRange;
+
+}
+
 bool AMyPlayer::CheckAssassinationAngle()
 {
 	if (!IsValid(Enemy))
@@ -152,21 +180,27 @@ bool AMyPlayer::CheckAssassinationAngle()
 	return Dot < FrontThreshold;
 }
 
-bool AMyPlayer::CheckDistanceToEnemy()
+bool AMyPlayer::CheckAssassinationPath()
 {
-
-	if (!IsValid(Enemy))
+	if (!IsValid(Enemy) || !GetWorld())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Enemy가 유효하지 않습니다."));
 		return false;
 	}
 
-	float DistanceToEnemy = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);  
+	Params.AddIgnoredActor(Enemy); 
 
-	UE_LOG(LogTemp, Warning, TEXT("Enemy: %s / Distance: %.1f / Range: %.1f"),
-		*GetNameSafe(Enemy), DistanceToEnemy, AssassinationRange);
+	FHitResult Hit;
 
-	return DistanceToEnemy <= AssassinationRange;
+	const bool bBlocked = GetWorld()->LineTraceSingleByChannel(
+		Hit,
+		GetActorLocation(),        
+		Enemy->GetActorLocation(), 
+		ECC_Visibility,
+		Params
+	);
 
+	return !bBlocked;
 }
 

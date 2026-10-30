@@ -36,12 +36,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool CanProcessActionInput();
 public:
+	bool CheckDistanceToEnemy();
 	bool CheckAssassinationAngle();
+	bool CheckAssassinationPath();
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Assassination", meta = (ClampMin = "0.0"))
 	float AssassinationRange = 150.0f;
-	UFUNCTION(BlueprintCallable, Category = "Assassination")
-	bool CheckDistanceToEnemy();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assassination")
 	AMyEnemy* Enemy = nullptr;
