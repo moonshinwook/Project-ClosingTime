@@ -39,6 +39,7 @@ public:
 	bool CheckDistanceToEnemy();
 	bool CheckAssassinationAngle();
 	bool CheckAssassinationPath();
+	void UpdatePlayerState();
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Assassination", meta = (ClampMin = "0.0"))
 	float AssassinationRange = 150.0f;

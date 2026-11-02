@@ -28,9 +28,6 @@ void AMyPlayer::BeginPlay()
 	Super::BeginPlay();
 	Enemy = Cast<AMyEnemy>(UGameplayStatics::GetActorOfClass(GetWorld(), AMyEnemy::StaticClass()));
 	BeginAssassionation();
-	UE_LOG(LogTemp, Log, TEXT("플레이어 상태 : %d, %d"), 
-		CharacterStateComponent->CurrentLifeState, 
-		CharacterStateComponent->CurrentStealthState);
 
 }
 
@@ -81,7 +78,7 @@ bool AMyPlayer::BeginAssassionation()
 
 	if(*PlayerLifeState == LifeState::Dead || *PlayerStealthState == StealthState::Detected)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("플레이어 상태 불가"));
+		UE_LOG(LogTemp, Warning, TEXT("플레이어 상태가 사망 또는 발각 상태라 암살 불가"));
 		return false;
 	}
 
@@ -119,6 +116,7 @@ void AMyPlayer::EndAssassionation()
 	bIsAssassinating = false;
 	SetAssassinationCollisionIgnored(false);
 	bUseControllerRotationYaw = true;
+	UpdatePlayerState();
 }
 
 bool AMyPlayer::CanProcessActionInput()
@@ -202,5 +200,17 @@ bool AMyPlayer::CheckAssassinationPath()
 	);
 
 	return !bBlocked;
+}
+
+void AMyPlayer::UpdatePlayerState()
+{
+	CharacterStateComponent->CurrentStealthState = StealthState::Detected;
+	CharacterStateComponent->CurrentAlertState = AlertState::Alerted;
+
+	UE_LOG(LogTemp, Warning, TEXT("플레이어 상태 업데이트 은신상태 : %d, 적 발각 상태 %d"), 
+		CharacterStateComponent->CurrentStealthState, 
+		CharacterStateComponent->CurrentAlertState);
+
+	return;
 }
 

@@ -1,0 +1,25 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "N1 Unreal MCP",
+  "Description": "MCP bridge plugin for AI agent control of UE editor",
+  "Category": "Editor",
+  "CreatedBy": "N1 Team",
+  "EnabledByDefault": true,
+  "CanContainContent": false,
+  "IsBetaVersion": false,
+  "Installed": false,
+  "SupportedTargetPlatforms": ["Win64", "Mac", "Linux"],
+  "Plugins": [
+    { "Name": "EditorScriptingUtilities", "Enabled": true },
+    { "Name": "EnhancedInput", "Enabled": true }
+  ],
+  "Modules": [
+    {
+      "Name": "N1UnrealMCP",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ]
+}
