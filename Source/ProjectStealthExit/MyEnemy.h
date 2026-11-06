@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿
 
 #pragma once
 
@@ -7,6 +7,7 @@
 #include "MyEnemy.generated.h"
 
 class UCharacterStateComponent;
+class AMyPlayer;
 
 UCLASS()
 class PROJECTSTEALTHEXIT_API AMyEnemy : public ACharacter
@@ -14,20 +15,27 @@ class PROJECTSTEALTHEXIT_API AMyEnemy : public ACharacter
 	GENERATED_BODY()
 	
 public:
-	// Sets default values for this character's properties
+	
 	AMyEnemy();
 private:
 	UPROPERTY()
 	TObjectPtr<UCharacterStateComponent> CharacterStateComponent;
+	UPROPERTY()
+	TObjectPtr<AMyPlayer> Player;
+
+	float ContinuousDetectionTime = 0.0f;
+	bool CanSeePlayer() const;
 protected:
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 
+public:
+	void UpdateEnemyState(float DeltaTime);
 public:	
-	// Called every frame
+	
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };

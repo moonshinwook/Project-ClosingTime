@@ -7,9 +7,8 @@
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
-#include "CharacterStateComponent.h"
 
-// Sets default values
+
 AMyPlayer::AMyPlayer()
 {
  	
@@ -22,7 +21,7 @@ AMyPlayer::AMyPlayer()
 
 
 
-// Called when the game starts or when spawned
+
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -31,14 +30,14 @@ void AMyPlayer::BeginPlay()
 
 }
 
-// Called every frame
+
 void AMyPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
 }
 
-// Called to bind functionality to input
+
 void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -116,7 +115,6 @@ void AMyPlayer::EndAssassionation()
 	bIsAssassinating = false;
 	SetAssassinationCollisionIgnored(false);
 	bUseControllerRotationYaw = true;
-	UpdatePlayerState();
 }
 
 bool AMyPlayer::CanProcessActionInput()
@@ -156,15 +154,22 @@ bool AMyPlayer::CheckDistanceToEnemy()
 
 bool AMyPlayer::CheckAssassinationAngle()
 {
-	if (!IsValid(Enemy))
+	bool bAngleValid = false;
+	return CheckAssassinationAngle(Enemy, bAngleValid);
+}
+
+bool AMyPlayer::CheckAssassinationAngle(const AMyEnemy* TargetEnemy, bool& bOutAngleValid) const
+{
+	bOutAngleValid = false;
+	if (!IsValid(TargetEnemy))
 	{
 		return false;
 	}
 
-	FVector DirectionToPlayer = GetActorLocation() - Enemy->GetActorLocation();
+	FVector DirectionToPlayer = GetActorLocation() - TargetEnemy->GetActorLocation();
 	DirectionToPlayer.Z = 0.0f;
 
-	FVector EnemyForward = Enemy->GetActorForwardVector();
+	FVector EnemyForward = TargetEnemy->GetActorForwardVector();
 	EnemyForward.Z = 0.0f;
 
 	if (!DirectionToPlayer.Normalize() || !EnemyForward.Normalize())
@@ -175,6 +180,7 @@ bool AMyPlayer::CheckAssassinationAngle()
 	float Dot = FVector::DotProduct(EnemyForward, DirectionToPlayer);
 	float FrontThreshold = FMath::Cos(FMath::DegreesToRadians(70.0f));
 
+	bOutAngleValid = true;
 	return Dot < FrontThreshold;
 }
 
@@ -202,15 +208,26 @@ bool AMyPlayer::CheckAssassinationPath()
 	return !bBlocked;
 }
 
-void AMyPlayer::UpdatePlayerState()
+void AMyPlayer::UpdatePlayerState(AlertState EnemyAlertState)
 {
-	CharacterStateComponent->CurrentStealthState = StealthState::Detected;
-	CharacterStateComponent->CurrentAlertState = AlertState::Alerted;
-
-	UE_LOG(LogTemp, Warning, TEXT("플레이어 상태 업데이트 은신상태 : %d, 적 발각 상태 %d"), 
-		CharacterStateComponent->CurrentStealthState, 
-		CharacterStateComponent->CurrentAlertState);
-
-	return;
+	if (!IsValid(CharacterStateComponent)
+		|| CharacterStateComponent->CurrentLifeState != LifeState::Alive)
+	{
+		return;
+	}
+	
+	if (EnemyAlertState == AlertState::Alerted)
+	{
+		if (CharacterStateComponent->CurrentStealthState != StealthState::Detected)
+		{
+			CharacterStateComponent->CurrentStealthState = StealthState::Detected;
+			UE_LOG(LogTemp, Log, TEXT("%s: Hidden -> Detected"), *GetName());
+		}
+	}
+	else if (CharacterStateComponent->CurrentStealthState != StealthState::Hidden)
+	{
+		CharacterStateComponent->CurrentStealthState = StealthState::Hidden;
+		UE_LOG(LogTemp, Log, TEXT("%s: Detected -> Hidden"), *GetName());
+	}
 }
 
